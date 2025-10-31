@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Scraper Pro - Scrape Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Responsive container styles for different resolutions */
+        @media screen and (min-width: 2560px) {
+            /* 1440p and above */
+            .container {
+                max-width: 2304px !important; /* 90% of 2560px */
+            }
+            .card-container {
+                max-width: 2048px !important; /* 80% of 2560px */
+            }
+        }
+
+        @media screen and (min-width: 1920px) and (max-width: 2559px) {
+            /* 1080p */
+            .container {
+                max-width: 1728px !important; /* 90% of 1920px */
+            }
+            .card-container {
+                max-width: 1536px !important; /* 80% of 1920px */
+            }
+        }
+
+        /* Card specific styles for higher resolutions */
+        .card-container {
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        @media screen and (max-width: 768px) {
+            .container {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            .main-content {
+                margin-top: 1rem !important;
+            }
+            .heading-group {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 1rem !important;
+            }
+            .heading-divider {
+                display: none !important;
+            }
+        }
+
+        /* Main styles */
+        .main-layout {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            width: 100%;
+            margin: 0 auto;
+            max-width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Card and loader styles */
+        .loading {
+            display: none;
+        }
+        .loading.active {
+            display: flex;
+        }
+        
+        .result-card {
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        .result-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Animation styles */
+        .pulse-button {
+            animation: pulse 2s infinite;
+        }
+        
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+        
+        .result-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(79, 70, 229, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        /* Responsive grid layouts */
+        .links-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+
+        .images-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+
+        @media screen and (max-width: 640px) {
+            .links-grid, .images-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Mobile optimizations */
+        @media screen and (max-width: 640px) {
+            .card-padding {
+                padding: 1rem !important;
+            }
+            .text-mobile-sm {
+                font-size: 0.875rem !important;
+            }
+            .heading-mobile {
+                font-size: 1.5rem !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen">
+    <div class="floating-particles"></div>
+    
+    <div class="main-layout">
+        <header class="w-full bg-white/90 backdrop-blur-md shadow-lg sticky top-0 z-50">
+            <div class="container mx-auto px-4 lg:px-8 xl:px-12 py-4 lg:py-6">
+                <div class="flex items-center justify-between flex-wrap gap-4 heading-group">
+                    <a href="/" class="group flex items-center text-indigo-600 hover:text-indigo-700 transition-all duration-300">
+                        <svg class="w-6 h-6 lg:w-8 lg:h-8 transform group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        <span class="ml-2 lg:ml-3 font-medium text-lg lg:text-xl">Back to Home</span>
+                    </a>
+                    <div class="h-8 w-px bg-gray-300 heading-divider"></div>
+                    <h1 class="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold gradient-text">Web Scraper Pro</h1>
+                </div>
+            </div>
+        </header>        <main class="main-content container mx-auto px-4 lg:px-8 xl:px-12 py-8 lg:py-12">
+            <div class="card-container mx-auto">
+            <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl 
+                p-6 md:p-8 lg:p-10 xl:p-12 
+                mb-8 
+                transform hover:scale-[1.02] hover:shadow-2xl
+                transition-all duration-300 
+                w-full max-w-screen-xl mx-auto
+                card-padding" data-aos="fade-up">
+                <div class="flex items-center mb-8 lg:mb-10 flex-wrap gap-3">
+                    <div class="bg-indigo-50 p-3 rounded-xl">
+                        <svg class="w-8 h-8 lg:w-10 lg:h-10 text-indigo-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold gradient-text heading-mobile">Start Scraping</h2>
+                </div>
+                <form id="scrapeForm" class="space-y-4 md:space-y-6">
+                    <div class="relative">
+                        <input type="url" id="url" name="url" required
+                            class="w-full px-5 py-4 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 pl-12 text-lg transition-all duration-300"
+                            placeholder="https://example.com">
+                        <svg class="w-6 h-6 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                        </svg>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-gradient-to-r from-indigo-600 to-blue-500 text-white px-6 py-4 rounded-lg hover:from-indigo-700 hover:to-blue-600 transform hover:scale-[1.02] transition-all duration-300 font-medium text-lg shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 pulse-button">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <span>Start Scraping</span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="loading items-center justify-center p-12 bg-white rounded-xl shadow-lg mb-8">
+                <div class="relative">
+                    <svg class="loading-spinner h-16 w-16 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <div class="mt-4 text-center">
+                        <h3 class="text-xl font-semibold text-indigo-600 mb-2">Scraping in Progress</h3>
+                        <p class="text-gray-600">Please wait while we analyze the webpage...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="results" class="space-y-8" style="display: none;">
+                <div class="result-card bg-white rounded-xl shadow-xl p-8" data-aos="fade-up">
+                    <div class="flex items-center mb-6">
+                        <svg class="w-8 h-8 text-indigo-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <h2 class="text-2xl font-bold gradient-text">Page Information</h2>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300">
+                            <h3 class="font-semibold text-indigo-600 mb-2">Title</h3>
+                            <p id="pageTitle" class="text-gray-700"></p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300">
+                            <h3 class="font-semibold text-indigo-600 mb-2">Description</h3>
+                            <p id="pageDescription" class="text-gray-700"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-card bg-white rounded-xl shadow-xl p-8" data-aos="fade-up">
+                    <div class="flex items-center mb-6">
+                        <svg class="w-8 h-8 text-indigo-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
+                        </svg>
+                        <h2 class="text-2xl font-bold gradient-text">Headings</h2>
+                    </div>
+                    <ul id="headings" class="space-y-3"></ul>
+                </div>
+
+                <div class="result-card bg-white rounded-xl shadow-xl p-8" data-aos="fade-up">
+                    <div class="flex items-center mb-6">
+                        <svg class="w-8 h-8 text-indigo-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                        </svg>
+                        <h2 class="text-2xl font-bold gradient-text">Links</h2>
+                    </div>
+                    <div id="links" class="links-grid"></div>
+                </div>
+
+                <div class="result-card bg-white rounded-xl shadow-xl p-8" data-aos="fade-up">
+                    <div class="flex items-center mb-6">
+                        <svg class="w-8 h-8 text-indigo-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <h2 class="text-2xl font-bold gradient-text">Images</h2>
+                    </div>
+                    <div id="images" class="images-grid"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize animations
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        // Create floating particles
+        function createParticles() {
+            const container = document.querySelector('.floating-particles');
+            if (!container) return;
+
+            const colors = ['#4F46E5', '#06B6D4', '#818CF8'];
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = Math.random() * 6 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.opacity = '0.3';
+                particle.style.animationDuration = (Math.random() * 6 + 3) + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Handle image loading errors
+        function handleImageError(img) {
+            img.onerror = null; // Prevent infinite loop
+            img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTMgMTZoLTF2LTRoLTFtMS00aC4wMU0yMSAxMmE5IDkgMCAxMS0xOCAwIDkgOSAwIDAxMTggMHoiIHN0cm9rZT0iI2NjYyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=';
+            img.alt = 'Image failed to load';
+            img.classList.add('opacity-50');
+        }
+
+        createParticles();
+
+        // Initialize form submission
+        document.getElementById('scrapeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const url = document.getElementById('url').value;
+            const loading = document.querySelector('.loading');
+            const results = document.getElementById('results');
+            const resultCards = document.querySelectorAll('.result-card');
+
+            // Hide results and show loading
+            loading.classList.add('active');
+            results.style.display = 'none';
+            
+            // Reset result cards
+            resultCards.forEach(card => {
+                card.classList.remove('visible');
+            });
+
+            try {
+                const response = await fetch('/scrape', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `url=${encodeURIComponent(url)}`
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Update results
+                    document.getElementById('pageTitle').textContent = data.title;
+                    document.getElementById('pageDescription').textContent = data.meta_description;
+
+                    // Update headings with animation
+                    const headingsEl = document.getElementById('headings');
+                    headingsEl.innerHTML = data.headings.map(h => 
+                        `<li class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300">
+                            <svg class="w-5 h-5 text-indigo-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                            <span class="text-gray-700">${h}</span>
+                        </li>`
+                    ).join('');
+
+                    // Update links with animation
+                    const linksEl = document.getElementById('links');
+                    linksEl.innerHTML = data.links.map(link => 
+                        `<a href="${link.href}" target="_blank" 
+                            class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-md">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-indigo-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                                <span class="text-indigo-600 hover:text-indigo-700 font-medium">${link.text || link.href}</span>
+                            </div>
+                        </a>`
+                    ).join('');
+
+                    // Update images with animation
+                    const imagesEl = document.getElementById('images');
+                    imagesEl.innerHTML = data.images.map(img => 
+                        `<div class="group relative overflow-hidden rounded-lg shadow-lg transform hover:scale-[1.02] transition-all duration-300">
+                            <div class="aspect-w-16 aspect-h-9">
+                                <img src="${img.src}" alt="${img.alt}" 
+                                    class="object-cover w-full h-full rounded-lg transform group-hover:scale-110 transition-transform duration-500"
+                                    onerror="handleImageError(this)">
+                            </div>
+                            ${img.alt ? `
+                                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <p class="text-white text-sm">${img.alt}</p>
+                                </div>
+                            ` : ''}
+                        </div>`
+                    ).join('');
+
+                    // Show results with staggered animation
+                    results.style.display = 'block';
+                    
+                    // Animate result cards one by one
+                    resultCards.forEach((card, index) => {
+                        setTimeout(() => {
+                            card.classList.add('visible');
+                        }, index * 200);
+                    });
+                    
+                    // Refresh AOS animations
+                    AOS.refresh();
+                } else {
+                    showNotification('Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            } finally {
+                loading.classList.remove('active');
+            }
+        });
+
+        // Show notification function
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `fixed bottom-4 right-4 p-4 rounded-lg shadow-lg transform transition-all duration-300 translate-y-full ${
+                type === 'error' ? 'bg-red-500' : 'bg-green-500'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center text-white">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        ${type === 'error' 
+                            ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>'
+                            : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>'
+                        }
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            requestAnimationFrame(() => {
+                notification.classList.remove('translate-y-full');
+            });
+
+            setTimeout(() => {
+                notification.classList.add('translate-y-full');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // Add input animation
+        const urlInput = document.getElementById('url');
+        urlInput.addEventListener('focus', () => {
+            urlInput.parentElement.classList.add('scale-105');
+        });
+        urlInput.addEventListener('blur', () => {
+            urlInput.parentElement.classList.remove('scale-105');
+        });
+    </script>
+</body>
+</html>
