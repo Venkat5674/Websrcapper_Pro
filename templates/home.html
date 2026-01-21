@@ -1,262 +1,325 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Scraper Pro</title>
+    <title>Web Scraper Pro - Advanced Data Extraction</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        .mobile-menu {
-            display: none;
-        }
-        .mobile-menu.active {
-            display: block;
-        }
-        @media (max-width: 768px) {
-            .desktop-menu {
-                display: none;
-            }
-        }
-    </style>
-<body class="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen relative flex flex-col">
-    <div class="floating-particles"></div>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern.css') }}">
+</head>
+
+<body class="min-h-screen relative flex flex-col font-sans text-slate-900 selection:bg-indigo-500 selection:text-white">
 
     <!-- Navbar -->
-    <nav class="bg-white/90 backdrop-blur-md shadow-lg sticky top-0 z-50">
-        <div class="container mx-auto px-4 lg:px-8 xl:px-12">
-            <div class="flex justify-between items-center h-16 lg:h-20">
-                <!-- Logo -->
-                <div class="flex items-center space-x-4">
-                    <svg class="w-8 h-8 lg:w-10 lg:h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+    <nav class="glass-nav fixed w-full z-50 transition-all duration-300">
+        <div class="container mx-auto px-6 h-20 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="/" class="flex items-center space-x-3 group">
+                <div class="bg-indigo-600/10 p-2 rounded-xl group-hover:bg-indigo-600/20 transition-colors">
+                    <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z">
+                        </path>
                     </svg>
-                    <span class="text-xl lg:text-2xl font-bold gradient-text">Web Scraper Pro</span>
                 </div>
+                <span class="text-2xl font-bold text-slate-800 tracking-tight">Web<span
+                        class="text-indigo-600">Scraper</span>Pro</span>
+            </a>
 
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="#features" class="text-gray-600 hover:text-indigo-600 transition-colors font-medium">Features</a>
-                    <a href="#how-it-works" class="text-gray-600 hover:text-indigo-600 transition-colors font-medium">How It Works</a>
-                    <a href="/scrape" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium">Get Started</a>
-                </div>
-
-                <!-- Mobile Menu Button -->
-                <div class="md:hidden">
-                    <button id="mobile-menu-button" class="text-gray-600 hover:text-indigo-600 focus:outline-none">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                </div>
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#features"
+                    class="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">Features</a>
+                <a href="#how-it-works"
+                    class="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">How It
+                    Works</a>
+                <a href="/scrape" class="btn-primary flex items-center shadow-lg hover:shadow-indigo-500/30">
+                    <span>Get Started</span>
+                    <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                    </svg>
+                </a>
             </div>
 
-            <!-- Mobile Menu -->
-            <div id="mobile-menu" class="mobile-menu md:hidden pb-4">
-                <a href="#features" class="block py-2 text-gray-600 hover:text-indigo-600 transition-colors">Features</a>
-                <a href="#how-it-works" class="block py-2 text-gray-600 hover:text-indigo-600 transition-colors">How It Works</a>
-                <a href="/scrape" class="block py-2 text-indigo-600 font-medium hover:text-indigo-700 transition-colors">Get Started</a>
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <button id="mobile-menu-button"
+                    class="text-slate-600 hover:text-indigo-600 p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu"
+            class="hidden md:hidden bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full left-0 shadow-xl">
+            <div class="p-4 space-y-4">
+                <a href="#features"
+                    class="block px-4 py-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg font-medium">Features</a>
+                <a href="#how-it-works"
+                    class="block px-4 py-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg font-medium">How
+                    It Works</a>
+                <a href="/scrape"
+                    class="block px-4 py-3 bg-indigo-600 text-white rounded-lg text-center font-bold shadow-lg">Get
+                    Started</a>
             </div>
         </div>
     </nav>
 
-    <div class="flex-grow">
-        <div class="container mx-auto px-4 py-8 relative z-10">
+    <div class="flex-grow pt-20">
         <!-- Hero Section -->
-        <div class="text-center mb-16" data-aos="fade-down">
-            <div class="float-animation mb-8">
-                <svg class="w-24 h-24 mx-auto text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                </svg>
-            </div>
-            <h1 class="text-6xl font-bold mb-4 gradient-text">Web Scraper Pro</h1>
-            <p class="text-xl text-gray-600 typing-text mb-8"></p>
-            
-            <!-- Stats Section -->
-            <div class="grid grid-cols-3 gap-8 max-w-3xl mx-auto mb-12">
-                <div class="bg-white rounded-lg p-6 shadow-lg card-hover">
-                    <div class="text-3xl font-bold text-indigo-600 counter" data-target="1000">0</div>
-                    <div class="text-gray-600">Websites Scraped</div>
+        <div class="relative overflow-hidden py-20 lg:py-32">
+            <!-- Background Decorations -->
+            <div
+                class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full overflow-hidden -z-10 pointer-events-none">
+                <div
+                    class="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob">
                 </div>
-                <div class="bg-white rounded-lg p-6 shadow-lg card-hover">
-                    <div class="text-3xl font-bold text-indigo-600 counter" data-target="500">0</div>
-                    <div class="text-gray-600">Happy Users</div>
+                <div
+                    class="absolute top-20 right-10 w-72 h-72 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000">
                 </div>
-                <div class="bg-white rounded-lg p-6 shadow-lg card-hover">
-                    <div class="text-3xl font-bold text-indigo-600 counter" data-target="5000">0</div>
-                    <div class="text-gray-600">Data Points</div>
+                <div
+                    class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000">
                 </div>
-            </div>
-        </div>
-
-        <!-- Features Grid -->
-        <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            <div class="bg-white rounded-lg shadow-lg p-8 card-hover feature-card" data-aos="fade-right">
-                <h2 class="text-2xl font-bold mb-6 text-indigo-600">Features</h2>
-                <ul class="space-y-6">
-                    <li class="feature-item flex items-center group">
-                        <svg class="w-8 h-8 text-indigo-500 mr-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <div>
-                            <h3 class="font-semibold group-hover:text-indigo-600 transition-colors">Smart Extraction</h3>
-                            <p class="text-gray-600">Extract titles, meta descriptions, and more</p>
-                        </div>
-                    </li>
-                    <li class="feature-item flex items-center group">
-                        <svg class="w-8 h-8 text-indigo-500 mr-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
-                        <div>
-                            <h3 class="font-semibold group-hover:text-indigo-600 transition-colors">Lightning Fast</h3>
-                            <p class="text-gray-600">Get results in milliseconds</p>
-                        </div>
-                    </li>
-                    <li class="feature-item flex items-center group">
-                        <svg class="w-8 h-8 text-indigo-500 mr-4 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
-                        </svg>
-                        <div>
-                            <h3 class="font-semibold group-hover:text-indigo-600 transition-colors">Beautiful Results</h3>
-                            <p class="text-gray-600">Clean and organized data presentation</p>
-                        </div>
-                    </li>
-                </ul>
             </div>
 
-            <div class="bg-white rounded-lg shadow-lg p-8 card-hover" data-aos="fade-left">
-                <h2 class="text-2xl font-bold mb-6 text-indigo-600">Get Started</h2>
-                <p class="text-gray-600 mb-8">Ready to start scraping? Try our powerful web scraping tool now!</p>
-                <div class="space-y-4">
-                    <a href="/scrape" 
-                       class="block w-full text-center bg-gradient-to-r from-indigo-600 to-blue-500 text-white px-6 py-4 rounded-lg hover:from-indigo-700 hover:to-blue-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
-                        Start Scraping Now
-                    </a>
-                    <div class="text-center">
-                        <span class="text-gray-500 text-sm">No registration required</span>
+            <div class="container mx-auto px-6 text-center max-w-4xl">
+                <div data-aos="fade-down" data-aos-duration="1000">
+                    <div
+                        class="inline-flex items-center px-4 py-2 rounded-full bg-white/50 border border-indigo-100 backdrop-blur-sm text-indigo-600 text-sm font-semibold mb-8 shadow-sm hover:shadow-md transition-shadow cursor-default">
+                        <span class="flex h-2 w-2 relative mr-3">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                        </span>
+                        v2.0 Now Available
+                    </div>
+                    <h1 class="text-5xl lg:text-7xl font-extrabold mb-8 tracking-tight leading-tight">
+                        Extract Data from the Web,
+                        <span class="text-gradient block mt-2">Effortlessly.</span>
+                    </h1>
+                    <p class="text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+                        The professional web scraping tool designed for developers and non-coders alike. Turn any
+                        website into structured data in seconds.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-16">
+                        <a href="/scrape"
+                            class="btn-primary w-full sm:w-auto text-lg px-8 py-4 shadow-xl hover:shadow-indigo-500/40">
+                            Start Scraping Free
+                        </a>
+                        <a href="#how-it-works"
+                            class="w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-slate-700 font-semibold border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 group">
+                            <svg class="w-5 h-5 text-slate-400 group-hover:text-indigo-500 transition-colors"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Watch Demo
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="glass p-8 rounded-2xl text-center card-hover-3d">
+                        <div class="text-4xl font-bold text-indigo-600 mb-2 counter" data-target="99" data-suffix="%">0%
+                        </div>
+                        <div class="text-slate-500 font-medium">Success Rate</div>
+                    </div>
+                    <div class="glass p-8 rounded-2xl text-center card-hover-3d">
+                        <div class="text-4xl font-bold text-purple-600 mb-2 counter" data-target="200" data-prefix="<"
+                            data-suffix="ms">0ms</div>
+                        <div class="text-slate-500 font-medium">Average Response</div>
+                    </div>
+                    <div class="glass p-8 rounded-2xl text-center card-hover-3d">
+                        <div class="text-4xl font-bold text-pink-600 mb-2 counter" data-target="10000" data-suffix="+">
+                            0+</div>
+                        <div class="text-slate-500 font-medium">Pages Scraped</div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- How It Works Section -->
-        <div class="mt-16 text-center" data-aos="fade-up">
-            <h2 class="text-3xl font-bold mb-8 gradient-text">How It Works</h2>
-            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <div class="bg-white p-6 rounded-lg shadow-lg card-hover">
-                    <div class="text-4xl mb-4">1️⃣</div>
-                    <h3 class="font-bold mb-2">Enter URL</h3>
-                    <p class="text-gray-600">Paste any webpage URL you want to analyze</p>
+
+        <!-- Features Section -->
+        <div id="features" class="py-24 bg-white/50 relative">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">Why Choose WebScraper Pro?</h2>
+                    <p class="text-slate-600 max-w-2xl mx-auto">Built with modern technologies to ensure reliability,
+                        speed, and accuracy in every scrape.</p>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-lg card-hover">
-                    <div class="text-4xl mb-4">2️⃣</div>
-                    <h3 class="font-bold mb-2">Click Scrape</h3>
-                    <p class="text-gray-600">Our smart algorithms will extract the data</p>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-lg card-hover">
-                    <div class="text-4xl mb-4">3️⃣</div>
-                    <h3 class="font-bold mb-2">Get Results</h3>
-                    <p class="text-gray-600">View your organized data instantly</p>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Feature 1 -->
+                    <div class="glass p-8 rounded-2xl card-hover-3d border-t-4 border-indigo-500" data-aos="fade-up"
+                        data-aos-delay="100">
+                        <div
+                            class="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center mb-6 text-indigo-600">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 text-slate-800">Lightning Fast</h3>
+                        <p class="text-slate-600 leading-relaxed">Engineered for speed. Get your data results in
+                            milliseconds without compromising on accuracy.</p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="glass p-8 rounded-2xl card-hover-3d border-t-4 border-purple-500" data-aos="fade-up"
+                        data-aos-delay="200">
+                        <div
+                            class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mb-6 text-purple-600">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 text-slate-800">High Accuracy</h3>
+                        <p class="text-slate-600 leading-relaxed">Smart parsing algorithms ensure you get exactly the
+                            data structure you requested, every time.</p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="glass p-8 rounded-2xl card-hover-3d border-t-4 border-pink-500" data-aos="fade-up"
+                        data-aos-delay="300">
+                        <div
+                            class="w-14 h-14 bg-pink-100 rounded-xl flex items-center justify-center mb-6 text-pink-600">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-bold text-slate-800">Easy Integration</h3>
+                            <span class="text-xs bg-pink-100 text-pink-700 px-2 py-1 rounded-full font-bold">New</span>
+                        </div>
+                        <p class="text-slate-600 leading-relaxed">JSON output format ready for immediate use in your
+                            applications, dashboards, or databases.</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white/90 backdrop-blur-md mt-16">
-        <div class="container mx-auto px-4 lg:px-8 xl:px-12 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <!-- Logo and Description -->
-                <div class="md:col-span-2">
-                    <div class="flex items-center space-x-4 mb-4">
-                        <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                        </svg>
-                        <span class="text-xl font-bold gradient-text">Web Scraper Pro</span>
-                    </div>
-                    <p class="text-gray-600 max-w-md">
-                        A powerful web scraping tool that helps you extract valuable information from any webpage with ease and efficiency.
-                    </p>
+    <footer class="bg-white/80 backdrop-blur-md border-t border-indigo-100 mt-auto">
+        <div class="container mx-auto px-6 py-12">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <span class="text-xl font-bold text-slate-800">Web<span
+                            class="text-indigo-600">Scraper</span>Pro</span>
+                    <p class="text-slate-500 text-sm mt-2">&copy; 2025 All rights reserved.</p>
                 </div>
-
-                <!-- Quick Links -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4 text-gray-800">Quick Links</h3>
-                    <ul class="space-y-3">
-                        <li><a href="#features" class="text-gray-600 hover:text-indigo-600 transition-colors">Features</a></li>
-                        <li><a href="#how-it-works" class="text-gray-600 hover:text-indigo-600 transition-colors">How It Works</a></li>
-                        <li><a href="/scrape" class="text-gray-600 hover:text-indigo-600 transition-colors">Get Started</a></li>
-                    </ul>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-slate-400 hover:text-indigo-600 transition-colors"><svg class="w-6 h-6"
+                            fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
+                        </svg></a>
+                    <a href="#" class="text-slate-400 hover:text-indigo-600 transition-colors"><svg class="w-6 h-6"
+                            fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                        </svg></a>
                 </div>
-
-                <!-- Contact -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4 text-gray-800">Connect With Us</h3>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-600 hover:text-indigo-600 transition-colors">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm3 8h-1.35c-.538 0-.65.221-.65.778v1.222h2l-.209 2h-1.791v7h-3v-7h-2v-2h2v-2.308c0-1.769.931-2.692 3.029-2.692h1.971v3z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="text-gray-600 hover:text-indigo-600 transition-colors">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6.066 9.645c.183 4.04-2.83 8.544-8.164 8.544-1.622 0-3.131-.476-4.402-1.291 1.524.18 3.045-.244 4.252-1.189-1.256-.023-2.317-.854-2.684-1.995.451.086.895.061 1.298-.049-1.381-.278-2.335-1.522-2.304-2.853.388.215.83.344 1.301.359-1.279-.855-1.641-2.544-.889-3.835 1.416 1.738 3.533 2.881 5.92 3.001-.419-1.796.944-3.527 2.799-3.527.825 0 1.572.349 2.096.907.654-.128 1.27-.368 1.824-.697-.215.671-.67 1.233-1.263 1.589.581-.07 1.135-.224 1.649-.453-.384.578-.87 1.084-1.433 1.489z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="text-gray-600 hover:text-indigo-600 transition-colors">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-2 16h-2v-6h2v6zm-1-6.891c-.607 0-1.1-.496-1.1-1.109 0-.612.492-1.109 1.1-1.109s1.1.497 1.1 1.109c0 .613-.493 1.109-1.1 1.109zm8 6.891h-1.998v-2.861c0-1.881-2.002-1.722-2.002 0v2.861h-2v-6h2v1.093c.872-1.616 4-1.736 4 1.548v3.359z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="text-gray-600 hover:text-indigo-600 transition-colors">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Copyright -->
-            <div class="mt-8 pt-8 border-t border-gray-200">
-                <p class="text-center text-gray-600">&copy; 2025 Web Scraper Pro. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
     <script>
         AOS.init({
-            duration: 1000,
             once: true,
-            offset: 100
+            offset: 50,
+            duration: 800,
         });
 
-        // Mobile menu toggle
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        // Mobile Menu Toggle
+        const mobileBtn = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
 
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('active');
+        mobileBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
         });
 
-        // Close mobile menu when clicking a link
-        const mobileLinks = mobileMenu.querySelectorAll('a');
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.remove('active');
+        // Counter Animation
+        function animateCounter(el, target) {
+            let start = 0;
+            const duration = 2000; // 2 seconds
+            const now = performance.now();
+
+            const frame = (currentTime) => {
+                const elapsed = currentTime - now;
+                const progress = Math.min(elapsed / duration, 1);
+
+                // Ease out cubic
+                const ease = 1 - Math.pow(1 - progress, 3);
+
+                const current = Math.floor(ease * target);
+                const prefix = el.dataset.prefix || '';
+                const suffix = el.dataset.suffix || '';
+
+                el.textContent = `${prefix}${current}${suffix}`;
+
+                if (progress < 1) {
+                    requestAnimationFrame(frame);
+                }
+            };
+
+            requestAnimationFrame(frame);
+        }
+
+        // Initialize Counters when showing
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    animateCounter(counter, parseInt(counter.dataset.target));
+                    observer.unobserve(counter);
+                }
             });
-        });
+        }, { threshold: 0.5 });
 
-        // Close mobile menu when scrolling
-        window.addEventListener('scroll', () => {
-            if (mobileMenu.classList.contains('active')) {
-                mobileMenu.classList.remove('active');
-            }
+        document.querySelectorAll('.counter').forEach(el => observer.observe(el));
+
+        // Smooth Slide Transition & Page Load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('loaded'); // Fade in
+
+            // Intercept internal links
+            document.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    const target = this.getAttribute('target');
+
+                    // Don't intercept: external links, hash links, new tab links
+                    if (!href || href.startsWith('http') || href.startsWith('#') || target === '_blank') return;
+
+                    e.preventDefault();
+                    document.body.classList.remove('loaded'); // Fade out
+
+                    setTimeout(() => {
+                        window.location.href = href;
+                    }, 500); // Match CSS transition time
+                });
+            });
         });
     </script>
 </body>
+
 </html>
